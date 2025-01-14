@@ -1,10 +1,26 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  //import svelteLogo from './assets/svelte.svg'
+  //import viteLogo from '/vite.svg'
+  //import Counter from './lib/Counter.svelte'
+  import CitySelector from "./lib/components/CitySelector.svelte";
+
+  let currentCity = "Test";
+  let searching = false;
+
+  function handleSearch(searchText: string) {
+    console.log('Searching for:', searchText);
+    currentCity = searchText;
+    searching = false;
+  }
 </script>
 
-<main>
+<header>
+  <CitySelector text={currentCity} search={handleSearch} bind:searching></CitySelector>
+</header>
+
+<button>test</button>
+
+<!--main>
   <div>
     <a href="https://vite.dev" target="_blank" rel="noreferrer">
       <img src={viteLogo} class="logo" alt="Vite Logo" />
@@ -26,9 +42,9 @@
   <p class="read-the-docs">
     Click on the Vite and Svelte logos to learn more
   </p>
-</main>
+</main-->
 
-<style>
+<!--style>
   .logo {
     height: 6em;
     padding: 1.5em;
@@ -44,4 +60,4 @@
   .read-the-docs {
     color: #888;
   }
-</style>
+</style-->

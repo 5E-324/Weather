@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://fonts.gstatic.com/s/materialsymbolsoutlined/v222/kJF1BvYX7BgnkSrUwT8OhrdQw4oELdPIeeII9v6oDMzByHX9rA6RzaxHMPdY43zj-jCxv3fzvRNU22ZXGJpEpjC_1v-p_4MrImHCIJIZrDCvHOej.woff2) format('woff2');
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -13,14 +20,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
+/*a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
 }
 a:hover {
   color: #535bf2;
-}
+}*/
 
 body {
   margin: 0;
@@ -30,14 +37,14 @@ body {
   min-height: 100vh;
 }
 
-h1 {
+/*h1 {
   font-size: 3.2em;
   line-height: 1.1;
 }
 
 .card {
   padding: 2em;
-}
+}*/
 
 #app {
   max-width: 1280px;
@@ -46,7 +53,7 @@ h1 {
   text-align: center;
 }
 
-button {
+/*button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -63,7 +70,7 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
-}
+}*/
 
 @media (prefers-color-scheme: light) {
   :root {
