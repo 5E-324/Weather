@@ -27,10 +27,22 @@
   }
 
   async function getWeather(cityName: string) {
-    let response = await fetch(``);
+    let response = await fetch(`http://localhost:3000/weather?q=${cityName}`); // TEMPORARY
+    
     if (!response.ok) {
-      throw Error(await response.text());
+      const contentType = response.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        let data = await response.json();
+        if (data.message) throw Error(data.message);
+      } else {
+        let text = await response.text();
+        if (text) throw Error(text);
+      }
+
+      throw Error(`${response.status} ${response.statusText}`);
     }
+
     let data: OpenWeatherMapResponse = await response.json();
     currentCity = data.name;
     console.log(data);
@@ -68,7 +80,7 @@
       </div>
     </div>
   {:catch error}
-    <p style="color: red">{error.message}</p>
+    <p style="color: red">Error: {error.message}</p>
   {/await}
 {/if}
 
