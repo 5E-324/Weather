@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
+
   export let text: string;
   export let search: (searchText: string) => void;
   export let searching = false;
@@ -6,7 +8,7 @@
   let searchText = '';
   
   let inputEmpty: boolean;
-  $: inputEmpty = !searchText;
+  $: inputEmpty = !searchText.trim();
 
   function showSearch() {
     searching = true;
@@ -15,47 +17,63 @@
     }, 0);
   }
   function handleSearch(event: SubmitEvent) {
-    if (!inputEmpty) search(searchText);
+    if (!inputEmpty) search(searchText.trim());
     event.preventDefault(); // Prevent form submission
   }
 </script>
 
-{#if searching}
-  <form on:submit={handleSearch} class="search-box">
-    <input 
-      id="search-input"
-      type="text"
-      placeholder="Enter location"
-      bind:value={searchText}
-      on:blur={() => { if (inputEmpty) searching = false; }}
-      on:keydown={(event: KeyboardEvent) => { if (event.code == "Escape") searching = false; }}
-      class="search-input"
-    />
-    
-    <button type="submit" class="search-button" class:enabled={!inputEmpty}>search</button>
-  </form>
-{:else}
-  <button on:click={showSearch} class="city-name">
-    {text}
-    <span class="edit-icon">edit</span>
-  </button>
-{/if}
+<div class="container">
+  {#if searching}
+    <form on:submit={handleSearch} class="search-box" transition:fade={{ duration: 200 }}>
+      <input 
+        id="search-input"
+        type="text"
+        placeholder="Enter location"
+        bind:value={searchText}
+        on:blur={() => { if (inputEmpty) searching = false; }}
+        on:keydown={(event: KeyboardEvent) => { if (event.code == "Escape") searching = false; }}
+        class="search-input"
+      />
+      
+      <button type="submit" class="search-button" class:enabled={!inputEmpty}>search</button>
+    </form>
+  {:else}
+    <button on:click={showSearch} class="city-name" transition:fade={{ duration: 200 }}>
+      {text}
+      <span class="material-symbols edit-icon">edit</span>
+    </button>
+  {/if}
+</div>
 
 <style>
+  .container {
+    display: grid;
+    place-items: center;
+  }
+
   .city-name {
     position: relative;
     font-size: 1.5rem;
     font-weight: 500;
-    cursor: pointer;
-    padding: 0.25rem;
+    /*padding: 0.25rem;*/
+    padding: 0;
+
+    grid-column: 1;
+    grid-row: 1;
 
     border: none;
     outline: none;
     background: none;
+
+    transition: filter 300ms;
+  }
+
+  .city-name:focus-visible,
+  .city-name:hover {
+    filter: drop-shadow(0 0 0.25em #6490ff);
   }
 
   .edit-icon {
-    font-family: 'Material Symbols Outlined';
     font-size: 1.25rem;
     color: #808080;
     transition: opacity 300ms;
@@ -67,7 +85,7 @@
     transform: translateY(-50%);
   }
 
-  .city-name:hover .edit-icon {
+  .city-name:is(:focus-visible, :hover) .edit-icon {
     opacity: 1;
   }
 
@@ -75,11 +93,22 @@
     display: flex;
     align-items: center;
 
+    /*width: fit-content;
+    margin: 0 auto;*/
+
+    grid-column: 1;
+    grid-row: 1;
+
     border-radius: 0.75em;
     border: 1px solid transparent;
-    border-color: #6490ff;
-    
+    border-color: #ccc;
+    transition: border-color 200ms;
+
     background-color: #f8f8f8;
+  }
+
+  .search-box:focus-within {
+    border-color: #6490ff;
   }
 
   .search-input {
@@ -110,7 +139,8 @@
     color: #444;
     cursor: pointer;
   }
-  .search-button.enabled:hover {
+
+  .search-button.enabled:is(:focus-visible, :hover) {
     filter: drop-shadow(0 0 0.25em #6490ff);
   }
 </style>
