@@ -4,8 +4,9 @@
   //import Counter from './lib/Counter.svelte'
   import CitySelector from "./lib/components/CitySelector.svelte";
   import { type OpenWeatherMapResponse } from "./lib/types";
+    import { getWeatherIconName } from "./lib/weather-icon-map";
 
-  let currentCity = "Test";
+  let currentCity: string | undefined;
   let searching = false;
   let useCelsius = true;
 
@@ -50,8 +51,8 @@
   }
 </script>
 
-<header>
-  <CitySelector text={currentCity} search={handleSearch} bind:searching></CitySelector>
+<header style="padding: 1em;">
+  <CitySelector text={currentCity ?? "Click to select city"} search={handleSearch} bind:searching></CitySelector>
 </header>
 
 {#if weatherPromise != undefined}
@@ -60,8 +61,11 @@
   {:then weatherData}
     {@const weather = weatherData.weather[0]}
     {@const main = weatherData.main}
+    {@const sys = weatherData.sys}
+    {@const isDay = weatherData.dt > sys.sunrise && weatherData.dt < sys.sunset}
     <div>
-      <img src="https://openweathermap.org/img/wn/{weather.icon}@2x.png" alt="" width="100" height="100"/>
+      <!--img src="https://openweathermap.org/img/wn/{weather.icon}@2x.png" alt="" width="100" height="100"/-->
+      <img src="weather-icons/{getWeatherIconName(weather.id, isDay)}.svg" alt="" style="height: 8em;" />
       <div class="current-temperature">
         {temperatureToString(main.temp)}
         <button class="temperature-unit-container" on:click={() => { useCelsius = !useCelsius; }}>
@@ -71,7 +75,7 @@
         </button>
       </div>
       <div>
-        <span>{weather.description}</span>
+        <span>{weather.main}</span>
         <span>
           {temperatureToString(main.temp_max)}&#176;
           <span>/</span>
@@ -87,9 +91,9 @@
 <style>
   .current-temperature {
     position: relative;
-    font-size: 3em;
+    font-size: 4em;
     line-height: 1;
-    margin: 0.25em auto;
+    margin: 0 auto 0.25em;
     width: fit-content;
   }
   .temperature-unit-container {
@@ -101,7 +105,7 @@
     position: absolute;
     top: 0.1em;
     left: calc(100% + 0.1em);
-    font-size: 0.5em;
+    font-size: 0.4em;
     display: flex;
 
     transition: filter 300ms;

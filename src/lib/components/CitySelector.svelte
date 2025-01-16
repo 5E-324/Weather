@@ -33,6 +33,7 @@
         on:blur={() => { if (inputEmpty) searching = false; }}
         on:keydown={(event: KeyboardEvent) => { if (event.code == "Escape") searching = false; }}
         class="search-input"
+        required
       />
       
       <button type="submit" class="search-button" class:enabled={!inputEmpty}>search</button>
