@@ -51,7 +51,7 @@
   }
 </script>
 
-<header style="padding: 1em;">
+<header style="padding: 0.5em;">
   <CitySelector text={currentCity ?? "Click to select city"} search={handleSearch} bind:searching></CitySelector>
 </header>
 

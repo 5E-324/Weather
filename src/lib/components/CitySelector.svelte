@@ -37,6 +37,8 @@
       />
       
       <button type="submit" class="search-button" class:enabled={!inputEmpty}>search</button>
+
+      <button type="button" on:click={()=>{ searching = false; }} class="material-symbols close-button button shadow-on-focus">close</button>
     </form>
   {:else}
     <button on:click={showSearch} class="city-name" transition:fade={{ duration: 200 }}>
@@ -50,6 +52,7 @@
   .container {
     display: grid;
     place-items: center;
+    height: 4em;
   }
 
   .city-name {
@@ -91,6 +94,7 @@
   }
 
   .search-box {
+    position: relative;
     display: flex;
     align-items: center;
 
@@ -126,9 +130,10 @@
     font-family: 'Material Symbols Outlined';
     padding: 0.5rem;
     font-size: 1.25rem;
-    line-height: 1.25rem;
+    line-height: 1;
     transition: filter 300ms, color 300ms;
-    
+    cursor:default;
+
     border: none;
     outline: none;
     background: none;
@@ -139,6 +144,17 @@
   .search-button.enabled {
     color: #444;
     cursor: pointer;
+  }
+
+  .close-button {
+    position:absolute;
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+
+    padding: 0.5rem;
+    font-size: 1.25rem;
+    line-height: 1;
   }
 
   .search-button.enabled:is(:focus-visible, :hover) {
