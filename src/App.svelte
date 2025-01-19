@@ -1,10 +1,9 @@
 <script lang="ts">
-  //import svelteLogo from './assets/svelte.svg'
-  //import viteLogo from '/vite.svg'
-  //import Counter from './lib/Counter.svelte'
+  import { fade } from "svelte/transition";
   import CitySelector from "./lib/components/CitySelector.svelte";
   import { type OpenWeatherMapResponse } from "./lib/types";
-    import { getWeatherIconName } from "./lib/weather-icon-map";
+  import { getWeatherIconName } from "./lib/weather-icon-map";
+  import { animateHeightChanges, animateHeightChangesFlip, animateHeightChangesFlip2, animateLayoutChanges, animateHeightChange2 } from "./lib/animate";
 
   let currentCity: string | undefined;
   let searching = false;
@@ -21,7 +20,6 @@
   }
 
   function handleSearch(searchText: string) {
-    console.log('Searching for:', searchText);
     weatherPromise = getWeather(searchText);
     currentCity = searchText;
     searching = false;
@@ -51,21 +49,38 @@
   }
 </script>
 
-<header style="padding: 0.5em;">
-  <CitySelector text={currentCity ?? "Click to select city"} search={handleSearch} bind:searching></CitySelector>
-</header>
+<div style="position: relative; height: 0;">
+  {#if !currentCity}
+    <h1 style="font-size: 3em; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); margin: 0;" transition:fade>
+      Weather
+    </h1>
+  {/if}
+</div>
 
+<div style="padding: 0.5em;">
+  <CitySelector text={currentCity} search={handleSearch} bind:searching></CitySelector>
+</div>
+
+<div style="transition: height 500ms" use:animateHeightChange2><div style="display: grid">
 {#if weatherPromise != undefined}
   {#await weatherPromise}
-    <p>loading...</p>
+    <p class="loading" style="grid-column: 1; grid-row: 1;" transition:fade>Loading...</p>
   {:then weatherData}
     {@const weather = weatherData.weather[0]}
     {@const main = weatherData.main}
     {@const sys = weatherData.sys}
     {@const isDay = weatherData.dt > sys.sunrise && weatherData.dt < sys.sunset}
-    <div>
+    <div style="grid-column: 1; grid-row: 1;" transition:fade>
       <!--img src="https://openweathermap.org/img/wn/{weather.icon}@2x.png" alt="" width="100" height="100"/-->
-      <img src="weather-icons/{getWeatherIconName(weather.id, isDay)}.svg" alt="" style="height: 8em;" />
+      <div class="weather-icon loading">
+        <img
+          src="weather-icons/{getWeatherIconName(weather.id, isDay)}.svg"
+          alt=""
+          on:load={(event) => {
+            (event.target as HTMLElement).parentElement?.classList.remove("loading");
+          }}
+        />
+      </div>
       <div class="current-temperature">
         {temperatureToString(main.temp)}
         <button class="temperature-unit-container" on:click={() => { useCelsius = !useCelsius; }}>
@@ -84,11 +99,53 @@
       </div>
     </div>
   {:catch error}
-    <p style="color: red">Error: {error.message}</p>
+    <p style="color: red; grid-column: 1; grid-row: 1;" transition:fade>Error: {error.message}</p>
   {/await}
 {/if}
+</div></div>
 
 <style>
+  @keyframes l1 {
+    0% {background-position: right}
+  }
+  p.loading {
+    color: transparent;
+    background-clip: text;
+    background-image: linear-gradient(90deg, #bbb 0%, #bbb 25%, #444 50%, #bbb 75%, #bbb 100%);
+    animation: l1 4s infinite linear;
+    background-size:400% 100%;
+  }
+  @keyframes -global-colorCycle {
+    0% {
+      background-color: #f0f0f0;
+    }
+    50% {
+      background-color: #f8f8f8;
+    }
+    100% {
+      background-color: #f0f0f0;
+    }
+  }
+  .weather-icon {
+    position: relative;
+    width: fit-content;
+    margin: 0 auto;
+  }
+  .weather-icon.loading::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 62.5%;
+    height: 62.5%;
+    border-radius: 1em;
+    transform: translate(-50%, -50%);
+    animation: colorCycle 2s linear infinite;
+    z-index: -1;
+  }
+  .weather-icon img {
+    width: 8em; height: 8em;
+  }
   .current-temperature {
     position: relative;
     font-size: 4em;
@@ -108,7 +165,7 @@
     font-size: 0.4em;
     display: flex;
 
-    transition: filter 300ms;
+    transition: filter 250ms;
   }
 
   .temperature-unit-container:is(:focus-visible, :hover) {
@@ -119,7 +176,7 @@
   }
   .show-on-hover {
     opacity: 0;
-    transition: opacity 300ms;
+    transition: opacity 250ms;
   }
 
   .temperature-unit-container:is(:focus-visible, :hover) .show-on-hover {

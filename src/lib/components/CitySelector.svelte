@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
 
-  export let text: string;
+  export let text: string | undefined;
   export let search: (searchText: string) => void;
   export let searching = false;
 
@@ -23,12 +23,12 @@
 </script>
 
 <div class="container">
-  {#if searching}
-    <form on:submit={handleSearch} class="search-box" transition:fade={{ duration: 200 }}>
+  {#if searching || !text}
+    <form on:submit={handleSearch} class="search-box" class:initial={!text} transition:fade={{ duration: 200 }}>
       <input 
         id="search-input"
         type="text"
-        placeholder="Enter location"
+        placeholder="Search"
         bind:value={searchText}
         on:blur={() => { if (inputEmpty) searching = false; }}
         on:keydown={(event: KeyboardEvent) => { if (event.code == "Escape") searching = false; }}
@@ -38,7 +38,9 @@
       
       <button type="submit" class="search-button" class:enabled={!inputEmpty}>search</button>
 
-      <button type="button" on:click={()=>{ searching = false; }} class="material-symbols close-button button shadow-on-focus">close</button>
+      {#if text}
+        <button type="button" on:click={()=>{ searching = false; }} class="material-symbols close-button button shadow-on-focus">close</button>
+      {/if}
     </form>
   {:else}
     <button on:click={showSearch} class="city-name" transition:fade={{ duration: 200 }}>
@@ -69,7 +71,7 @@
     outline: none;
     background: none;
 
-    transition: filter 300ms;
+    transition: filter 250ms;
   }
 
   .city-name:focus-visible,
@@ -80,7 +82,7 @@
   .edit-icon {
     font-size: 1.25rem;
     color: #808080;
-    transition: opacity 300ms;
+    transition: opacity 250ms;
     opacity: 0;
     margin-left: 0.25rem;
 
@@ -107,9 +109,13 @@
     border-radius: 0.75em;
     border: 1px solid transparent;
     border-color: #ccc;
-    transition: border-color 200ms;
+    transition: border-color 250ms;
 
     background-color: #f8f8f8;
+  }
+
+  .search-box.initial {
+    border-radius: 1.125rem;
   }
 
   .search-box:focus-within {
@@ -126,12 +132,16 @@
     /*flex: 1;*/
   }
 
+  .search-box.initial .search-input {
+    width: 25em;
+  }
+
   .search-button {
     font-family: 'Material Symbols Outlined';
     padding: 0.5rem;
     font-size: 1.25rem;
     line-height: 1;
-    transition: filter 300ms, color 300ms;
+    transition: filter 250ms, color 250ms;
     cursor:default;
 
     border: none;

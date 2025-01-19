@@ -35,6 +35,7 @@ a:hover {
 
 html {
   height: 100%;
+  overflow: auto;
 }
 
 body {
@@ -43,6 +44,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100%;
+  overflow: hidden;
 }
 
 /*h1 {
